@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>公式计算器</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f7;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+  .container {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 40px;
+  }
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1d1d1f;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .input-group {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    font-size: 14px;
+    color: #86868b;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  input {
+    width: 100%;
+    height: 52px;
+    border: 2px solid #e5e5ea;
+    border-radius: 12px;
+    font-size: 24px;
+    font-weight: 500;
+    color: #1d1d1f;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus {
+    border-color: #007aff;
+  }
+  input::placeholder {
+    color: #c7c7cc;
+    font-size: 16px;
+  }
+  .results {
+    display: flex;
+    gap: 12px;
+  }
+  .result-card {
+    flex: 1;
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    text-align: center;
+  }
+  .result-card .label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 8px;
+  }
+  .result-card .value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #007aff;
+  }
+  .result-card:nth-child(2) .value {
+    color: #ff3b30;
+  }
+  .error {
+    color: #ff3b30;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 12px;
+    min-height: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>半全场计算器</h1>
+  <div class="input-group">
+    <label>输入 x 的值</label>
+    <input type="number" id="xInput" placeholder="请输入数字" step="any" autofocus>
+    <div class="error" id="error"></div>
+  </div>
+  <div class="results">
+    <div class="result-card">
+      <div class="label">结果 A</div>
+      <div class="value" id="resultA">—</div>
+    </div>
+    <div class="result-card">
+      <div class="label">结果 B</div>
+      <div class="value" id="resultB">—</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const xInput = document.getElementById('xInput');
+const resultA = document.getElementById('resultA');
+const resultB = document.getElementById('resultB');
+const errorEl = document.getElementById('error');
+
+xInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Backspace' || e.key === 'Delete') {
+    e.preventDefault();
+    this.value = '';
+    resultA.textContent = '—';
+    resultB.textContent = '—';
+    errorEl.textContent = '';
+  }
+});
+
+xInput.addEventListener('input', function() {
+  const val = parseFloat(this.value);
+  errorEl.textContent = '';
+
+  if (isNaN(val) || this.value.trim() === '') {
+    resultA.textContent = '—';
+    resultB.textContent = '—';
+    return;
+  }
+
+  if (val === 0) {
+    resultA.textContent = '—';
+    resultB.textContent = '—';
+    errorEl.textContent = 'x 不能为 0';
+    return;
+  }
+
+  const a = 79.7 / (79.7 / val + 1);
+  resultA.textContent = a.toFixed(4);
+
+  if (79.7 / val - 1 === 0) {
+    resultB.textContent = '∞';
+    errorEl.textContent = '结果 B 中分母为 0（x ≈ 79.7 时触发）';
+  } else {
+    const b = 79.7 / (79.7 / val - 1);
+    resultB.textContent = b.toFixed(4);
+  }
+});
+</script>
+</body>
+</html>
